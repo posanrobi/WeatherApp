@@ -104,9 +104,9 @@ function App() {
                 </div>
                 <div className="flex flex-col items-center pr-4">
                   <p>Visibility</p>
-                  <p className="text-gray-500">{`${
+                  <p className="text-gray-500">{`${(
                     weather.visibility / 1000
-                  }km`}</p>
+                  ).toFixed(0)}km`}</p>
                 </div>
               </div>
               <div className="flex gap-4 items-center justify-center mt-6 bg-white text-black rounded-xl p-2">
