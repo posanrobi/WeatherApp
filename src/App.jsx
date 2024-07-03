@@ -6,6 +6,7 @@ import sunImage from "./assets/sun.png";
 import searchIcon from "./assets/searchIcon.png";
 import sunriseIcon from "./assets/sunrise.png";
 import sunsetIcon from "./assets/sunset.png";
+import snowIcon from "./assets/snow_icon.png";
 
 function App() {
   const [city, setCity] = useState("");
@@ -44,7 +45,14 @@ function App() {
 
   return (
     <>
-      <div className="bg-gradient-to-r from-cyan-500 to-blue-500 pl-12 pr-12 pt-6 pb-6 rounded-lg flex flex-col min-h-[90vh] w-96 mx-auto">
+      <div
+        className={`${
+          weather && weather.main.temp - 273.15 < 0
+            ? "bg-gradient-to-r from-sky-900 to-indigo-400"
+            : "bg-gradient-to-r from-cyan-500 to-blue-500"
+        } pl-12 pr-12 pt-6 pb-6 rounded-lg flex flex-col min-h-[90vh] w-96 mx-auto
+        }`}
+      >
         <div>
           <div className="flex items-center justify-center gap-2 mb-4">
             <input
@@ -80,7 +88,7 @@ function App() {
                 </div>
               </div>
               <img
-                src={sunImage}
+                src={weather.main.temp - 273.15 < 0 ? snowIcon : sunImage}
                 className={`h-28 w-28 ${
                   clickedSearch ? "animate-spin-once" : ""
                 } mb-8`}
