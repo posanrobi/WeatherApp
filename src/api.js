@@ -10,3 +10,14 @@ export async function fetchWeatherData(city) {
   const data = await response.json();
   return data;
 }
+
+export async function fetchCitySuggestions(city) {
+  const response = await fetch(
+    `http://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=5&appid=${API_KEY}`
+  );
+  if (!response.ok) {
+    throw new Error("Error while fetching data!");
+  }
+  const data = await response.json();
+  return data;
+}

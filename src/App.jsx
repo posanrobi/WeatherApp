@@ -1,6 +1,6 @@
 import "./App.css";
 import { useState } from "react";
-import { fetchWeatherData } from "./api";
+import { fetchWeatherData, fetchCitySuggestions } from "./api";
 import CurrentDay from "./currentDay";
 import sunImage from "./assets/sun.png";
 import searchIcon from "./assets/searchIcon.png";
@@ -13,10 +13,37 @@ function App() {
   const [weather, setWeather] = useState(null);
   const [error, setError] = useState("");
   const [clickedSearch, setClickedSearch] = useState(false);
+  const [suggestions, setSuggestions] = useState([]);
 
-  const handleInputChange = (e) => {
-    setCity(e.target.value);
+  const handleInputChange = async (e) => {
+    const query = e.target.value;
+    setCity(query);
     setError("");
+
+    if (query.length > 2) {
+      try {
+        const data = await fetchCitySuggestions(query);
+
+        // TODO
+        const filteredSuggestions = data.filter(
+          (suggestion) =>
+            suggestion.name.toLowerCase().includes(query.toLowerCase()) ||
+            suggestion.country.toLowerCase().includes(query.toLowerCase())
+        );
+        console.log("Filtered suggestions:", filteredSuggestions); // Debug log
+
+        setSuggestions(data);
+      } catch (error) {
+        setError(error.message);
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setCity(suggestion.name);
+    setSuggestions([]);
   };
 
   const handleSearch = async () => {
@@ -54,13 +81,27 @@ function App() {
         }`}
       >
         <div>
-          <div className="flex items-center justify-center gap-2 mb-4">
+          <div className="flex items-center justify-center gap-2 mb-4 relative">
             <input
               type="text"
               value={city}
               onChange={handleInputChange}
               className="bg-white p-1 pl-2 pr-2 rounded-lg text-black w-full"
+              placeholder="Enter City"
             ></input>
+            {suggestions.length > 0 && (
+              <ul className="bg-white absolute top-9 left-0 right-0 z-10 rounded-lg w-full h-auto max-h-80 overflow-y-auto">
+                {suggestions.map((suggestion) => (
+                  <li
+                    key={suggestion.lat}
+                    className="text-black p-2 h-auto w-auto cursor-pointer hover:bg-sky-200 border-b-2 "
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.name}, {suggestion.country}
+                  </li>
+                ))}
+              </ul>
+            )}
             <button onClick={handleSearch}>
               <img
                 src={searchIcon}
