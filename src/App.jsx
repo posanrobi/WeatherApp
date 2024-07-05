@@ -24,15 +24,16 @@ function App() {
       try {
         const data = await fetchCitySuggestions(query);
 
-        // TODO
-        const filteredSuggestions = data.filter(
-          (suggestion) =>
-            suggestion.name.toLowerCase().includes(query.toLowerCase()) ||
-            suggestion.country.toLowerCase().includes(query.toLowerCase())
+        const filteredSuggestions = data.filter((suggestion) =>
+          suggestion.name.toLowerCase().includes(query.toLowerCase())
         );
-        console.log("Filtered suggestions:", filteredSuggestions); // Debug log
 
-        setSuggestions(data);
+        const noDuplicates = Array.from(
+          new Set(filteredSuggestions.map((item) => item.name))
+        ).map((name) => {
+          return filteredSuggestions.find((item) => item.name === name);
+        });
+        setSuggestions(noDuplicates);
       } catch (error) {
         setError(error.message);
       }
@@ -50,6 +51,7 @@ function App() {
     try {
       setClickedSearch(true);
       const data = await fetchWeatherData(city);
+
       setWeather(data);
       setError("");
 
@@ -172,7 +174,7 @@ function App() {
               </div>
             </div>
           ) : (
-            <p className="mt-10">Please enter the city</p>
+            <p className="mt-20">No weather data available</p>
           )}
         </div>
       </div>
